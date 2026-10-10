@@ -1,0 +1,316 @@
+﻿@* @model IEnumerable<RVMWMApp.Models.Product>
+@{
+    ViewData["Title"] = "Products Catalog";
+    var categories = ViewBag.Categories as List<string> ?? new List<string>();
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Filters Column -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form method="get">
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select name="category" class="form-select">
+                                <option value="All Categories">All Categories</option>
+                                @foreach (var category in categories)
+                                {
+                                    <option value="@category">@category</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Price Range (ZAR)</label>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <input type="number" name="minPrice" class="form-control" placeholder="Min" value="0">
+                                </div>
+                                <div class="col">
+                                    <input type="number" name="maxPrice" class="form-control" placeholder="Max" value="10000">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="inStockOnly" value="true" id="inStockCheck">
+                                <label class="form-check-label" for="inStockCheck">
+                                    In Stock Only
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="featuredOnly" value="true" id="featuredCheck">
+                                <label class="form-check-label" for="featuredCheck">
+                                    Featured Products
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="onSaleOnly" value="true" id="saleCheck">
+                                <label class="form-check-label" for="saleCheck">
+                                    On Sale
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Column -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Product Catalog</h2>
+
+            <div class="row">
+                @foreach (var product in Model)
+                {
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+
+                            @{
+                                // Use product.ImageUrl if present; otherwise assign static images or placeholder
+                                string imgUrl = !string.IsNullOrEmpty(product.ImageUrl)
+                                ? Url.Content(product.ImageUrl)
+                                : product.Name switch
+                                {
+                                    "RP1" => Url.Content("~/images/RP1.png"),
+                                    "RP2" => Url.Content("~/images/RP2.png"),
+                                    "RP3" => Url.Content("~/images/RP3.png"),
+                                    "RP4" => Url.Content("~/images/RP4.png"),
+                                    "RP5" => Url.Content("~/images/RP5.png"),
+                                    _ => Url.Content("~/images/placeholder.png")
+                                };
+                            }
+
+                            <img src="@imgUrl" class="card-img-top" alt="@product.Name" style="height:200px; object-fit:cover;">
+
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">@product.Name</h5>
+                                <p class="card-text flex-grow-1">@product.Description</p>
+
+                                <div class="mb-2">
+                                    <span class="h4 text-primary">R@(product.Price.ToString("F2"))</span>
+                                </div>
+
+                                <div class="mb-2">
+                                    <span class="badge bg-@(product.Stock > 0 ? "success" : "danger")">
+                                        @(product.Stock > 0 ? $"{product.Stock} available" : "Out of Stock")
+                                    </span>
+                                    @if (product.IsFeatured)
+                                    {
+                                        <span class="badge bg-warning ms-1">Featured</span>
+                                    }
+                                    @if (product.IsOnSale)
+                                    {
+                                        <span class="badge bg-danger ms-1">On Sale</span>
+                                    }
+                                </div>
+
+                                <div class="mb-3">
+                                    @{
+                                        var fullStars = (int)product.Rating;
+                                        var hasHalfStar = product.Rating - fullStars >= 0.5;
+                                    }
+                                    @for (int i = 1; i <= 5; i++)
+                                    {
+                                        if (i <= fullStars)
+                                        {
+                                            <span class="text-warning">★</span>
+                                        }
+                                        else if (i == fullStars + 1 && hasHalfStar)
+                                        {
+                                            <span class="text-warning">★</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-warning">☆</span>
+                                        }
+                                    }
+                                    <span class="text-muted ms-1">(@product.ReviewCount reviews)</span>
+                                </div>
+
+                                <div class="mt-auto">
+                                    @if (product.Stock > 0)
+                                    {
+                                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                            <input type="hidden" name="id" value="@product.Id" />
+                                            <input type="hidden" name="quantity" value="1" />
+                                            <button type="submit" class="btn btn-success w-100 mb-2">Add to Cart</button>
+                                        </form>
+                                    }
+                                    <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-outline-primary w-100">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div> *@
+
+
+@{
+    ViewData["Title"] = "Products Catalog";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Filters Column (Optional) -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Filters</h5>
+                </div>
+                <div class="card-body">
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Category</label>
+                            <select class="form-select">
+                                <option>All Categories</option>
+                                <option>Plastic</option>
+                                <option>Metal</option>
+                                <option>Glass</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Price Range (ZAR)</label>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <input type="number" class="form-control" placeholder="Min" value="0">
+                                </div>
+                                <div class="col">
+                                    <input type="number" class="form-control" placeholder="Max" value="10000">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Column -->
+        <div class="col-md-9">
+            <h2 class="mb-4">Product Catalog</h2>
+            <div class="row">
+
+                <!-- RP1 -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="~/images/RP1.png" class="card-img-top" alt="RP1" style="height:200px; object-fit:cover;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Recycled PET Bottles (Grade A)</h5>
+                            <p class="card-text flex-grow-1">High-quality recycled PET bottles suitable for various manufacturing applications.</p>
+                            <span class="h4 text-primary mb-2">R100.00</span>
+                            <span class="badge bg-success mb-2">10 available</span>
+
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="id" value="1" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-success w-100 mb-2">Add to Cart</button>
+                            </form>
+
+                            <a asp-action="Details" asp-route-id="1" class="btn btn-outline-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RP2 -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="~/images/RP2.png" class="card-img-top" alt="RP2" style="height:200px; object-fit:cover;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Aluminium Cans</h5>
+                            <p class="card-text flex-grow-1">Clean, crushed aluminum cans ready for recycling and manufacturing.</p>
+                            <span class="h4 text-primary mb-2">R150.00</span>
+                            <span class="badge bg-success mb-2">5 available</span>
+
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="id" value="2" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-success w-100 mb-2">Add to Cart</button>
+                            </form>
+
+                            <a asp-action="Details" asp-route-id="2" class="btn btn-outline-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RP3 -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="~/images/RP3.png" class="card-img-top" alt="RP3" style="height:200px; object-fit:cover;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Mixed Plastic Waste</h5>
+                            <p class="card-text flex-grow-1">Pre-sorted mixed plastic waste including HDPE, LDPE, and PP materials.</p>
+                            <span class="h4 text-primary mb-2">R200.00</span>
+                            <span class="badge bg-danger mb-2">Out of Stock</span>
+
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="id" value="3" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-success w-100 mb-2" disabled>Add to Cart</button>
+                            </form>
+
+                            <a asp-action="Details" asp-route-id="3" class="btn btn-outline-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RP4 -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="~/images/RP4.png" class="card-img-top" alt="RP4" style="height:200px; object-fit:cover;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">RVM Maintainance Kit</h5>
+                            <p class="card-text flex-grow-1">Complete maintenance kit for RVM machines including tools and replacement parts.</p>
+                            <span class="h4 text-primary mb-2">R250.00</span>
+                            <span class="badge bg-success mb-2">8 available</span>
+
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="id" value="4" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-success w-100 mb-2">Add to Cart</button>
+                            </form>
+
+                            <a asp-action="Details" asp-route-id="4" class="btn btn-outline-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RP5 -->
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <img src="~/images/RP5.png" class="card-img-top" alt="RP5" style="height:200px; object-fit:cover;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">Glass Bottles</h5>
+                            <p class="card-text flex-grow-1">
+                                
+                                Color-sorted glass bottles ready for recycling and remanufacturing..
+                            </p>
+                            <span class="h4 text-primary mb-2">R300.00</span>
+                            <span class="badge bg-success mb-2">12 available</span>
+
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                <input type="hidden" name="id" value="5" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn btn-success w-100 mb-2">Add to Cart</button>
+                            </form>
+
+                            <a asp-action="Details" asp-route-id="5" class="btn btn-outline-primary w-100">View Details</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

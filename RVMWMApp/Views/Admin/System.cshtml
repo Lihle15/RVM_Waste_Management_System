@@ -1,0 +1,215 @@
+﻿@model SystemInfoViewModel
+@{
+    ViewData["Title"] = "System Management";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="fas fa-cogs me-2"></i>System Management</h2>
+            <p class="text-muted">Manage system settings and maintenance operations.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- System Information -->
+        <div class="col-lg-6 mb-4">
+            <div class="card card-premium h-100">
+                <div class="card-header-premium">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>System Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="system-info">
+                        <div class="info-item d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                            <div>
+                                <i class="fas fa-database me-2 text-primary"></i>
+                                <strong>Database</strong>
+                            </div>
+                            <span class="text-muted">@Model.DatabaseName</span>
+                        </div>
+                        <div class="info-item d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                            <div>
+                                <i class="fas fa-server me-2 text-info"></i>
+                                <strong>Server</strong>
+                            </div>
+                            <span class="text-muted">@Model.ServerVersion</span>
+                        </div>
+                        <div class="info-item d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                            <div>
+                                <i class="fas fa-code-branch me-2 text-success"></i>
+                                <strong>Environment</strong>
+                            </div>
+                            <span class="badge bg-success">@Model.Environment</span>
+                        </div>
+                        <div class="info-item d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                            <div>
+                                <i class="fas fa-clock me-2 text-warning"></i>
+                                <strong>Server Time</strong>
+                            </div>
+                            <span class="text-muted">@Model.ServerTime.ToString("F")</span>
+                        </div>
+                        <div class="info-item d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
+                            <div>
+                                <i class="fas fa-microchip me-2 text-secondary"></i>
+                                <strong>ASP.NET Core Version</strong>
+                            </div>
+                            <span class="text-muted">8.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance Operations -->
+        <div class="col-lg-6 mb-4">
+            <div class="card card-premium h-100">
+                <div class="card-header-premium">
+                    <h5 class="mb-0"><i class="fas fa-tools me-2"></i>Maintenance Operations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="maintenance-actions">
+                        <div class="action-item mb-4">
+                            <h6><i class="fas fa-seedling me-2 text-success"></i>Database Seeding</h6>
+                            <p class="text-muted small">Reset and repopulate the database with sample data.</p>
+                            <form asp-action="SeedDatabase" method="post" onsubmit="return confirm('This will reset all data and recreate sample data. Continue?');">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-database me-2"></i>Seed Database
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="action-item mb-4">
+                            <h6><i class="fas fa-trash-alt me-2 text-danger"></i>Data Cleanup</h6>
+                            <p class="text-muted small">Remove temporary files and clean up system cache.</p>
+                            <button class="btn btn-outline-danger w-100" onclick="runCleanup()">
+                                <i class="fas fa-broom me-2"></i>Run Cleanup
+                            </button>
+                        </div>
+
+                        <div class="action-item mb-4">
+                            <h6><i class="fas fa-file-export me-2 text-primary"></i>Backup Database</h6>
+                            <p class="text-muted small">Create a backup of the current database state.</p>
+                            <button class="btn btn-outline-primary w-100" onclick="createBackup()">
+                                <i class="fas fa-download me-2"></i>Create Backup
+                            </button>
+                        </div>
+
+                        <div class="action-item">
+                            <h6><i class="fas fa-chart-bar me-2 text-info"></i>System Analytics</h6>
+                            <p class="text-muted small">Generate system usage reports and analytics.</p>
+                            <button class="btn btn-outline-info w-100" onclick="generateReports()">
+                                <i class="fas fa-chart-line me-2"></i>Generate Reports
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Health -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-premium">
+                <div class="card-header-premium">
+                    <h5 class="mb-0"><i class="fas fa-heartbeat me-2"></i>System Health</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <div class="health-status">
+                                <div class="status-indicator bg-success"></div>
+                                <h5 class="text-success mt-2">Database</h5>
+                                <small class="text-muted">Connected</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="health-status">
+                                <div class="status-indicator bg-success"></div>
+                                <h5 class="text-success mt-2">API Services</h5>
+                                <small class="text-muted">Operational</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="health-status">
+                                <div class="status-indicator bg-success"></div>
+                                <h5 class="text-success mt-2">Authentication</h5>
+                                <small class="text-muted">Secure</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <div class="health-status">
+                                <div class="status-indicator bg-success"></div>
+                                <h5 class="text-success mt-2">Storage</h5>
+                                <small class="text-muted">85% Free</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .system-info .info-item:hover {
+        background: rgba(0,0,0,0.02);
+        border-color: var(--primary) !important;
+    }
+
+    .maintenance-actions .action-item {
+        padding: 1rem;
+        border: 1px solid #e9ecef;
+        border-radius: 10px;
+    }
+
+        .maintenance-actions .action-item:hover {
+            border-color: var(--primary);
+            background: rgba(0,0,0,0.01);
+        }
+
+    .health-status {
+        padding: 1rem;
+    }
+
+    .status-indicator {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin: 0 auto;
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+</style>
+
+<script>
+    function runCleanup() {
+        if (confirm('This will clean up temporary files and cache. Continue?')) {
+            alert('Cleanup operation started...');
+            // In real application, this would call a backend API
+        }
+    }
+
+    function createBackup() {
+        alert('Database backup process started...');
+        // In real application, this would call a backend API
+    }
+
+    function generateReports() {
+        alert('Generating system reports...');
+        // In real application, this would call a backend API
+    }
+</script>

@@ -1,0 +1,151 @@
+﻿@model List<RVMWMApp.Controllers.RecyclingFact>
+@{
+    ViewData["Title"] = "Recycling Education";
+}
+
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <div class="hero-section">
+                <h1 class="display-4 mb-4">♻️ Learn to Recycle</h1>
+                <p class="lead mb-4">Discover how recycling transforms waste into valuable resources and protects our environment</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="#facts" class="btn btn-primary-premium btn-lg">
+                        <i class="fas fa-lightbulb me-2"></i>Recycling Facts
+                    </a>
+                    <a asp-action="Guide" class="btn btn-success-premium btn-lg">
+                        <i class="fas fa-book me-2"></i>Recycling Guide
+                    </a>
+                    <a asp-action="Impact" class="btn btn-info btn-lg text-white">
+                        <i class="fas fa-chart-line me-2"></i>Environmental Impact
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recycling Facts -->
+    <div id="facts" class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2><i class="fas fa-lightbulb me-2"></i>Did You Know?</h2>
+            <p class="text-muted">Amazing facts about recycling and environmental conservation</p>
+        </div>
+
+        @foreach (var fact in Model)
+        {
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card card-premium h-100">
+                    <div class="card-body text-center">
+                        <div class="education-icon mb-3">
+                            <i class="fas fa-recycle fa-3x text-primary"></i>
+                        </div>
+                        <h5 class="card-title">@fact.Title</h5>
+                        <p class="card-text">@fact.Content</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Recycling Process -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card card-premium">
+                <div class="card-header-premium text-center">
+                    <h4 class="mb-0"><i class="fas fa-sync-alt me-2"></i>The Recycling Journey</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-2 col-6 mb-3">
+                            <div class="process-step">
+                                <div class="step-number">1</div>
+                                <i class="fas fa-trash-alt fa-2x text-primary mb-2"></i>
+                                <h6>Collection</h6>
+                                <small>Waste is collected from RVMs</small>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-6 mb-3">
+                            <div class="process-step">
+                                <div class="step-number">2</div>
+                                <i class="fas fa-sort fa-2x text-success mb-2"></i>
+                                <h6>Sorting</h6>
+                                <small>Materials are separated by type</small>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-6 mb-3">
+                            <div class="process-step">
+                                <div class="step-number">3</div>
+                                <i class="fas fa-recycle fa-2x text-warning mb-2"></i>
+                                <h6>Processing</h6>
+                                <small>Materials are cleaned and processed</small>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-6 mb-3">
+                            <div class="process-step">
+                                <div class="step-number">4</div>
+                                <i class="fas fa-industry fa-2x text-info mb-2"></i>
+                                <h6>Manufacturing</h6>
+                                <small>Transformed into new products</small>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-6 mb-3">
+                            <div class="process-step">
+                                <div class="step-number">5</div>
+                                <i class="fas fa-shopping-bag fa-2x text-danger mb-2"></i>
+                                <h6>New Products</h6>
+                                <small>Products available for purchase</small>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-6 mb-3">
+                            <div class="process-step">
+                                <div class="step-number">6</div>
+                                <i class="fas fa-leaf fa-2x text-success mb-2"></i>
+                                <h6>Sustainability</h6>
+                                <small>Closing the recycling loop</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .education-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin: 0 auto;
+    }
+
+    .process-step {
+        padding: 1rem;
+    }
+
+    .step-number {
+        width: 30px;
+        height: 30px;
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin: 0 auto 1rem auto;
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, #2E8B57 0%, #1F6B45 100%);
+        color: white;
+        padding: 4rem 2rem;
+        border-radius: 20px;
+    }
+</style>

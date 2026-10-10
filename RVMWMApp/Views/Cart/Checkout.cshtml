@@ -1,0 +1,29 @@
+﻿@model List<RVMWMApp.Models.CartItem>
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="container mt-4">
+    <h2>Checkout</h2>
+    <hr />
+
+    <p>You're about to pay for the following recyclables:</p>
+
+    <ul class="list-group mb-3">
+        @foreach (var item in Model)
+        {
+            <li class="list-group-item d-flex justify-content-between">
+                <span>@item.ProductName (x@item.Quantity)</span>
+                <strong>R@item.Total.ToString("F2")</strong>
+            </li>
+        }
+    </ul>
+
+    <h4>Total: R@Model.Sum(i => i.Total).ToString("F2")</h4>
+
+    <form asp-action="ProcessPayment" method="post">
+        <button type="submit" class="btn btn-primary w-100 mt-3">Pay with PayFast</button>
+    </form>
+
+    <a asp-controller="Cart" asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Back to Cart</a>
+</div>

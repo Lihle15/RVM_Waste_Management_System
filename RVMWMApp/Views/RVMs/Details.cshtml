@@ -1,0 +1,94 @@
+﻿@model ReverseVendingMachine
+@{
+    ViewData["Title"] = "RVM Details";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <!-- RVM Image -->
+            <div class="mb-4">
+                <img src="@Model.ImageUrl" class="img-fluid rounded shadow" alt="@Model.MachineName"
+                     style="max-height: 400px; width: 100%; object-fit: cover;"
+                     onerror="this.src='/images/rvm-default.jpg'">
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h2>@Model.MachineName</h2>
+            <hr />
+
+            <dl class="row">
+                <dt class="col-sm-4">Location:</dt>
+                <dd class="col-sm-8">@Model.Location</dd>
+
+                <dt class="col-sm-4">Address:</dt>
+                <dd class="col-sm-8">@Model.Address</dd>
+
+                <dt class="col-sm-4">Capacity:</dt>
+                <dd class="col-sm-8">@Model.Capacity.ToString("F1") kg</dd>
+
+                <dt class="col-sm-4">Current Load:</dt>
+                <dd class="col-sm-8">@Model.CurrentLoad.ToString("F1") kg</dd>
+
+                <dt class="col-sm-4">Status:</dt>
+                <dd class="col-sm-8">
+                    <span class="badge bg-@(Model.IsActive ? "success" : "secondary")">
+                        @(Model.IsActive ? "Active" : "Inactive")
+                    </span>
+                </dd>
+            </dl>
+
+            @{
+                var percentage = Model.Capacity > 0 ? (int)((double)Model.CurrentLoad / (double)Model.Capacity * 100) : 0;
+            }
+
+            <!-- Capacity Progress Bar -->
+            <div class="mb-4">
+                <label class="form-label">Capacity Usage:</label>
+                <div class="progress" style="height: 25px;">
+                    <div class="progress-bar @(percentage >= 80 ? "bg-danger" : percentage >= 60 ? "bg-warning" : "bg-success")"
+                         role="progressbar" style="width: @percentage%; font-weight: bold;">
+                        @percentage%
+                    </div>
+                </div>
+                <div class="text-center mt-1">
+                    <small class="text-muted">@Model.CurrentLoad.ToString("F1") / @Model.Capacity.ToString("F1") kg</small>
+                </div>
+            </div>
+
+            <!-- Accepted Materials -->
+            <div class="mb-4">
+                <h5>Accepted Materials:</h5>
+                <div class="d-flex flex-wrap gap-2">
+                    @if (Model.AcceptsPlastic)
+                    {
+                        <span class="badge bg-primary">Plastic</span>
+                    }
+                    @if (Model.AcceptsGlass)
+                    {
+                        <span class="badge bg-success">Glass</span>
+                    }
+                    @if (Model.AcceptsMetal)
+                    {
+                        <span class="badge bg-warning">Metal</span>
+                    }
+                    @if (Model.AcceptsPaper)
+                    {
+                        <span class="badge bg-info">Paper</span>
+                    }
+                    @if (Model.AcceptsElectronics)
+                    {
+                        <span class="badge bg-danger">Electronics</span>
+                    }
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to List
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

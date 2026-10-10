@@ -1,0 +1,181 @@
+﻿@* @model List<RVMWMApp.Models.CartItem>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">🛍️ My Cart</h2>
+
+    @if (Model.Count == 0)
+    {
+        <p class="text-center text-muted">Your cart is empty. Go add some recyclables!</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>R@item.Price.ToString("F2")</td>
+                        <td>@item.Quantity</td>
+                        <td>R@(item.Price* item.Quantity).ToString("F2")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+        <div class="text-end mt-3">
+            <a asp-action="Checkout" class="btn btn-success btn-lg">Proceed to Checkout</a>
+        </div>
+    }
+</div> *@
+
+               @*      @model IEnumerable<RVMWMApp.Models.CartItem>
+@{
+    ViewData["Title"] = "Shopping Cart";
+    decimal grandTotal = 0;
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Your Cart</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Your cart is empty.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price (ZAR)</th>
+                    <th>Quantity</th>
+                    <th>Total (ZAR)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    // hardcode price based on product name
+                    decimal price = item.ProductName switch
+                    {
+                        "RP1" => 100.00m,
+                        "RP2" => 150.00m,
+                        "RP3" => 200.00m,
+                        "RP4" => 250.00m,
+                        "RP5" => 300.00m,
+                        _ => 0.00m
+                    };
+
+                    var total = price * item.Quantity;
+                    grandTotal += total;
+
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>R@price.ToString("F2")</td>
+                        <td>@item.Quantity</td>
+                        <td>R@total.ToString("F2")</td>
+                        <td>
+                            <form asp-controller="Cart" asp-action="RemoveFromCart" method="post">
+                                <input type="hidden" name="cartItemId" value="@item.CartItemId" />
+                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="3" class="text-end">Grand Total:</th>
+                    <th>R@grandTotal.ToString("F2")</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="d-flex justify-content-end mt-3 gap-2">
+            <a asp-controller="Products" asp-action="Index" class="btn btn-secondary">Continue Shopping</a>
+            <a asp-controller="Orders" asp-action="Checkout" class="btn btn-success">Proceed to Checkout</a>
+        </div>
+    }
+</div>
+ *@
+ @model IEnumerable<RVMWMApp.Models.CartItem>
+@{
+    ViewData["Title"] = "Shopping Cart";
+    decimal grandTotal = 0;
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Your Cart</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Your cart is empty.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price (ZAR)</th>
+                    <th>Quantity</th>
+                    <th>Total (ZAR)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var total = item.Price * item.Quantity;
+                    grandTotal += total;
+
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>R@item.Price.ToString("F2")</td>
+                        <td>@item.Quantity</td>
+                        <td>R@total.ToString("F2")</td>
+                        <td>
+                            <form asp-controller="Cart" asp-action="RemoveFromCart" method="post">
+                                <!-- Pass ProductId to match controller -->
+                                <input type="hidden" name="id" value="@item.ProductId" />
+                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="3" class="text-end">Grand Total:</th>
+                    <th>R@grandTotal.ToString("F2")</th>
+                    <th></th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="d-flex justify-content-end mt-3 gap-2">
+            <a asp-controller="Products" asp-action="Index" class="btn btn-secondary">Continue Shopping</a>
+            <a asp-controller="Orders" asp-action="Checkout" class="btn btn-success">Proceed to Checkout</a>
+        </div>
+    }
+</div>

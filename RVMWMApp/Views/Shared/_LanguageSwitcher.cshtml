@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNetCore.Localization
+@{
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var currentCulture = requestCulture?.RequestCulture.Culture.Name ?? "en";
+}
+
+<div class="dropdown">
+    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        <i class="fas fa-language me-2"></i>
+        @currentCulture.ToUpper()
+    </button>
+    <ul class="dropdown-menu">
+        <li>
+            <form method="post" asp-controller="Language" asp-action="SetLanguage" asp-route-returnUrl="@Context.Request.Path">
+                <input type="hidden" name="culture" value="en" />
+                <button type="submit" class="dropdown-item @(currentCulture == "en" ? "active" : "")">
+                    🇺🇸 English
+                </button>
+            </form>
+        </li>
+        <li>
+            <form method="post" asp-controller="Language" asp-action="SetLanguage" asp-route-returnUrl="@Context.Request.Path">
+                <input type="hidden" name="culture" value="es" />
+                <button type="submit" class="dropdown-item @(currentCulture == "es" ? "active" : "")">
+                    🇪🇸 Español
+                </button>
+            </form>
+        </li>
+        <li>
+            <form method="post" asp-controller="Language" asp-action="SetLanguage" asp-route-returnUrl="@Context.Request.Path">
+                <input type="hidden" name="culture" value="fr" />
+                <button type="submit" class="dropdown-item @(currentCulture == "fr" ? "active" : "")">
+                    🇫🇷 Français
+                </button>
+            </form>
+        </li>
+        <li>
+            <form method="post" asp-controller="Language" asp-action="SetLanguage" asp-route-returnUrl="@Context.Request.Path">
+                <input type="hidden" name="culture" value="de" />
+                <button type="submit" class="dropdown-item @(currentCulture == "de" ? "active" : "")">
+                    🇩🇪 Deutsch
+                </button>
+            </form>
+        </li>
+        <li>
+            <form method="post" asp-controller="Language" asp-action="SetLanguage" asp-route-returnUrl="@Context.Request.Path">
+                <input type="hidden" name="culture" value="zh" />
+                <button type="submit" class="dropdown-item @(currentCulture == "zh" ? "active" : "")">
+                    🇨🇳 中文
+                </button>
+            </form>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,94 @@
+﻿@model IEnumerable<ReverseVendingMachine>
+@{
+    ViewData["Title"] = "Reverse Vending Machines";
+}
+
+<h2 class="mb-4">Reverse Vending Machines</h2>
+
+<div class="row">
+    @{
+        // HARD-CODED IMAGE PATHS
+        var imagePaths = new string[]
+        {
+        "/images/RVM1.png",
+        "/images/RVM2.png",
+        "/images/RVM3.png",
+        "/images/RVM4.png",
+        "/images/RVM5.png",
+        "/images/RVM6.png"
+        };
+        int index = 0;
+    }
+
+    @foreach (var rvm in Model)
+    {
+        var percentage = rvm.Capacity > 0 ? (int)((double)rvm.CurrentLoad / (double)rvm.Capacity * 100) : 0;
+        var statusClass = percentage >= 80 ? "border-danger" : percentage >= 60 ? "border-warning" : "border-success";
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm @statusClass">
+                <!-- PERFECTLY FITTING IMAGE -->
+                <div class="image-container d-flex align-items-center justify-content-center"
+                     style="height: 220px; background-color: #f8f9fa;">
+                    <img src="@imagePaths[index]" class="img-fluid"
+                         alt="@rvm.MachineName"
+                         style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                </div>
+                @{
+                    index++;
+                }
+
+                <div class="card-body">
+                    <h5 class="card-title">@rvm.MachineName</h5>
+                    <p class="card-text text-muted">
+                        <i class="fas fa-map-marker-alt"></i> @rvm.Location
+                    </p>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <small class="text-muted">Current Load</small>
+                            <small class="text-muted">@percentage%</small>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar @(percentage >= 80 ? "bg-danger" : percentage >= 60 ? "bg-warning" : "bg-success")"
+                                 role="progressbar" style="width: @percentage%;">
+                            </div>
+                        </div>
+                        <small class="text-muted">@rvm.CurrentLoad.ToString("F1") / @rvm.Capacity.ToString("F1") kg</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="badge @(rvm.IsActive ? "bg-success" : "bg-secondary")">
+                            @(rvm.IsActive ? "Active" : "Inactive")
+                        </span>
+                        <span class="badge bg-info ms-1">@rvm.Status</span>
+                    </div>
+
+                    <a asp-action="Details" asp-route-id="@rvm.Id" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-info-circle me-1"></i>View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .card:hover {
+        transform: translateY(-5px);
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .progress-bar {
+        transition: width 0.5s ease-in-out;
+    }
+
+    /* Perfect image styling */
+    .image-container img {
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover .image-container img {
+        transform: scale(1.05);
+    }
+</style>

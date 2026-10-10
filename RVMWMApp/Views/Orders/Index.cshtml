@@ -1,0 +1,110 @@
+﻿@model List<Order>
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2><i class="fas fa-shopping-cart me-2"></i>My Waste Collection Orders</h2>
+            <p class="lead">Manage your scheduled waste collection orders</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mx-auto">
+            <div class="card card-premium">
+                <div class="card-header-premium text-center">
+                    <h5 class="mb-0"><i class="fas fa-plus me-2"></i>Schedule New Collection</h5>
+                </div>
+                <div class="card-body">
+                    <a asp-action="Create" class="btn btn-primary-premium w-100 btn-lg">
+                        <i class="fas fa-calendar-plus me-2"></i>Schedule Collection
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-premium">
+                <div class="card-header-premium">
+                    <h5 class="mb-0"><i class="fas fa-history me-2"></i>Order History</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>Date</th>
+                                        <th>Waste Type</th>
+                                        <th>Estimated Weight</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var order in Model)
+                                    {
+                                        <tr>
+                                            <td>#@order.Id</td>
+                                            <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                                            <td>@order.WasteType</td>
+                                            <td>@order.EstimatedWeight.ToString("0.0") kg</td>
+                                            <td>
+                                                <span class="badge @GetStatusBadgeClass(order.Status)">
+                                                    @order.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (order.Status == "Pending" || order.Status == "Confirmed")
+                                                {
+                                                    <form method="post" asp-action="Cancel" asp-route-id="@order.Id" class="d-inline">
+                                                        @Html.AntiForgeryToken()
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                                onclick="return confirm('Are you sure you want to cancel this order?')">
+                                                            <i class="fas fa-times me-1"></i>Cancel
+                                                        </button>
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No orders found. Schedule your first waste collection!</p>
+                            <a asp-action="Create" class="btn btn-primary-premium">
+                                <i class="fas fa-plus me-2"></i>Create First Order
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    public string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "bg-warning",
+            "Confirmed" => "bg-info",
+            "Collected" => "bg-primary",
+            "Completed" => "bg-success",
+            "Cancelled" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}

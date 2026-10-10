@@ -1,0 +1,167 @@
+﻿@model RVMWMApp.ViewModels.RewardsViewModel
+@{
+    ViewData["Title"] = "My Rewards";
+}
+
+<div class="container">
+    <!-- Points Summary -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card card-premium">
+                <div class="card-body text-center py-4">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="points-display">
+                                <i class="fas fa-coins fa-3x text-warning mb-3"></i>
+                                <h2>@Model.TotalPoints</h2>
+                                <p class="text-muted">Available Points</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="points-display">
+                                <i class="fas fa-trophy fa-3x text-primary mb-3"></i>
+                                <h2>@Model.Rewards.Count</h2>
+                                <p class="text-muted">Total Rewards</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="points-display">
+                                <i class="fas fa-recycle fa-3x text-success mb-3"></i>
+                                <h2>@Model.User.TotalRecyclingSessions</h2>
+                                <p class="text-muted">Recycling Sessions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Rewards History -->
+        <div class="col-lg-8 mb-4">
+            <div class="card card-premium">
+                <div class="card-header-premium">
+                    <h5 class="mb-0"><i class="fas fa-gift me-2"></i>Rewards History</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Rewards.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Description</th>
+                                        <th>Points</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var reward in Model.Rewards)
+                                    {
+                                        <tr>
+                                            <td>@reward.EarnedAt.ToString("MMM dd, yyyy")</td>
+                                            <td>@reward.Description</td>
+                                            <td>
+                                                <span class="@(reward.Points > 0 ? "text-success" : "text-danger")">
+                                                    @(reward.Points > 0 ? "+" : "")@reward.Points
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @if (reward.IsRedeemed)
+                                                {
+                                                    <span class="badge bg-success">Redeemed</span>
+                                                }
+                                                else if (reward.ExpiresAt < DateTime.Now)
+                                                {
+                                                    <span class="badge bg-danger">Expired</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-primary">Active</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="fas fa-gift fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No rewards earned yet. Start recycling to earn points!</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Available Badges -->
+        <div class="col-lg-4">
+            <div class="card card-premium">
+                <div class="card-header-premium">
+                    <h5 class="mb-0"><i class="fas fa-medal me-2"></i>Achievement Badges</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @foreach (var badge in Model.Badges)
+                        {
+                            <div class="col-6 mb-3 text-center">
+                                <div class="badge-item">
+                                    <i class="@badge.Icon fa-2x text-@badge.Color mb-2"></i>
+                                    <h6>@badge.Name</h6>
+                                    <small class="text-muted">@badge.Description</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Points Redemption -->
+            <div class="card card-premium mt-4">
+                <div class="card-header-premium">
+                    <h5 class="mb-0"><i class="fas fa-shopping-cart me-2"></i>Redeem Points</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" asp-action="RedeemPoints">
+                        <div class="mb-3">
+                            <label for="points" class="form-label">Points to Redeem</label>
+                            <input type="number" class="form-control" id="points" name="points"
+                                   min="100" max="@Model.TotalPoints" value="100">
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">
+                            <i class="fas fa-exchange-alt me-2"></i>Redeem Points
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .points-display {
+        padding: 1rem;
+    }
+
+        .points-display h2 {
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+    .badge-item {
+        padding: 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .badge-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+</style>

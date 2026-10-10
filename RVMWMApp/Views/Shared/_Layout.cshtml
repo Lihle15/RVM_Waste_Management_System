@@ -1,0 +1,332 @@
+﻿@using RVMWMApp.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    // Read the user once so the compiler knows it is never null
+    var principal = Context.User;
+    var isSignedIn = SignInManager.IsSignedIn(principal);
+    var isAdmin = principal.IsInRole("Admin");
+    var isOperator = principal.IsInRole("Operator");
+
+    var currentUser = isSignedIn ? await UserManager.GetUserAsync(principal) : null;
+    var fullName = currentUser?.FullName;
+    var displayName = string.IsNullOrWhiteSpace(fullName) ? (principal.Identity?.Name ?? "User") : fullName;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - RVM Waste Management</title>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        /* Navbar sits in the page flow and stays at the top while scrolling,
+           so it never covers the content below it. */
+        header { position: sticky; top: 0; z-index: 1030; }
+        header .navbar-premium { position: relative !important; top: auto !important; }
+
+        /* Stop menu items wrapping onto several lines */
+        .navbar-premium .nav-link,
+        .navbar-premium .navbar-brand { white-space: nowrap; }
+
+        /* Long names/emails get cut with "..." instead of running off the page */
+        .nav-user-name {
+            display: inline-block;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            vertical-align: bottom;
+        }
+
+        main[role="main"] { padding-top: 1.5rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-premium">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-recycle me-2"></i>Go Green Waste Management
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                <i class="fas fa-home me-1"></i>Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Products" asp-action="Index">
+                                <i class="fas fa-shopping-bag me-1"></i>Products
+                            </a>
+                        </li>
+
+                        <!-- Recycling -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-recycle me-1"></i>Recycle
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="RVMs" asp-action="Locator">
+                                        <i class="fas fa-map-marker-alt me-2"></i>Find a Machine
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Orders" asp-action="Create">
+                                        <i class="fas fa-calendar-plus me-2"></i>Schedule a Collection
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Education" asp-action="Index">
+                                        <i class="fas fa-graduation-cap me-2"></i>How it works
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Education" asp-action="Guide">
+                                        <i class="fas fa-book me-2"></i>Recycling Guide
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Education" asp-action="Impact">
+                                        <i class="fas fa-chart-line me-2"></i>Environmental Impact
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Community -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-users me-1"></i>Community
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Feedback" asp-action="Index">
+                                        <i class="fas fa-comments me-2"></i>Reviews
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Rewards" asp-action="Index">
+                                        <i class="fas fa-trophy me-2"></i>Rewards
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="DumpingReport" asp-action="Create">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>Report Illegal Dumping
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
+                        <!-- Search Box -->
+                        <li class="nav-item me-3">
+                            <form asp-controller="Products" asp-action="Index" method="get" class="search-box">
+                                <div class="input-group">
+                                    <input type="text" name="search" class="form-control" placeholder="Search products..." value="@(ViewBag.SearchTerm ?? "")" />
+                                    <button type="submit" class="btn btn-primary-premium">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </li>
+
+                        @if (isAdmin || isOperator)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-cog me-1"></i>@(isAdmin ? "Admin" : "Manage")
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    @if (isAdmin)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard">
+                                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Admin" asp-action="Users">
+                                                <i class="fas fa-users me-2"></i>Users
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Admin" asp-action="Products">
+                                                <i class="fas fa-boxes me-2"></i>Products
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Admin" asp-action="RVMs">
+                                                <i class="fas fa-robot me-2"></i>RVMs
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                    }
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Orders" asp-action="Manage">
+                                            <i class="fas fa-clipboard-check me-2"></i>Orders
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="DumpingReport" asp-action="Manage">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>Dumping Reports
+                                        </a>
+                                    </li>
+                                    @if (isAdmin)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Feedback" asp-action="Manage">
+                                                <i class="fas fa-comments me-2"></i>Reviews
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Admin" asp-action="SystemInfo">
+                                                <i class="fas fa-cogs me-2"></i>System
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </li>
+                        }
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Cart" asp-action="Index">
+                                <i class="fas fa-shopping-cart me-1"></i>Cart
+                            </a>
+                        </li>
+
+                        @if (isSignedIn)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="fas fa-user me-1"></i><span class="nav-user-name">@displayName</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Profile" asp-action="Index">
+                                            <i class="fas fa-user me-2"></i>My Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Orders" asp-action="Index">
+                                            <i class="fas fa-shopping-cart me-2"></i>My Orders
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="DumpingReport" asp-action="Index">
+                                            <i class="fas fa-clipboard-list me-2"></i>My Dumping Reports
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Rewards" asp-action="Index">
+                                            <i class="fas fa-trophy me-2"></i>My Rewards
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                                            <i class="fas fa-cog me-2"></i>Account Settings
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" method="post">
+                                            <button type="submit" class="dropdown-item">
+                                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Login
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- Alerts -->
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-premium alert-dismissible fade show mt-3" role="alert">
+                <i class="fas fa-check-circle me-2"></i>@(TempData["Success"]?.ToString())
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger alert-premium alert-dismissible fade show mt-3" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>@(TempData["Error"]?.ToString())
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="footer-premium">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="fas fa-recycle me-2"></i>RVM Waste Management</h5>
+                    <p>Sustainable solutions for a cleaner environment. Making Durban greener, one recycle at a time.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light"><i class="fas fa-chevron-right me-2"></i>About Us</a></li>
+                        <li><a href="#" class="text-light"><i class="fas fa-chevron-right me-2"></i>Contact</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy" class="text-light"><i class="fas fa-chevron-right me-2"></i>Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Contact Info</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i>Durban, KZN, South Africa</li>
+                        <li><i class="fas fa-phone me-2"></i>+27 31 123 4567</li>
+                        <li><i class="fas fa-envelope me-2"></i>info@rvmwm.co.za</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <small>&copy; @DateTime.Now.Year RVM Waste Management. Making the world greener.</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

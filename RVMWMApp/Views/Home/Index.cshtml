@@ -1,0 +1,109 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!-- Language Toggle -->
+<div class="text-end me-4 mt-3">
+    <button id="langToggle" class="btn btn-sm btn-outline-success">Switch to isiZulu</button>
+</div>
+
+<div class="text-center hero-section mb-5">
+    <h1 id="title" class="display-3 mb-3 fw-bold text-success">RVM Waste Management System 🌍</h1>
+    <p id="subtitle" class="lead mb-4 text-white">Sustainable waste management solutions for a cleaner Durban and KZN region.</p>
+    <div class="d-flex justify-content-center gap-3">
+        <a id="browseBtn" class="btn btn-success btn-lg px-5 shadow" asp-controller="Products" asp-action="Index">Browse Products</a>
+        <a id="findBtn" class="btn btn-outline-light btn-lg px-5" asp-controller="RVMs" asp-action="Index">Find an RVM Near You</a>
+    </div>
+</div>
+
+<div class="container-fluid px-0">
+
+    <div class="row mb-5 py-5 bg-light-subtle">
+        <div class="col-12 text-center">
+            <h2 id="howItWorks" class="mb-5 display-5 fw-bold text-dark">How It Works: Clean & Get Rewarded</h2>
+            <div class="row justify-content-center">
+
+                <div class="col-md-3 text-center mb-4">
+                    <i class="bi bi-box-seam-fill display-3 text-primary mb-3"></i>
+                    <h4 id="step1Title" class="fw-bold">1. Deposit Waste</h4>
+                    <p id="step1Desc" class="text-muted">Insert your empty plastic bottles or cans into any nearby RVM.</p>
+                </div>
+
+                <div class="col-md-3 text-center mb-4">
+                    <i class="bi bi-award-fill display-3 text-warning mb-3"></i>
+                    <h4 id="step2Title" class="fw-bold">2. Earn Points</h4>
+                    <p id="step2Desc" class="text-muted">The machine instantly recognizes the item and credits your account with points.</p>
+                </div>
+
+                <div class="col-md-3 text-center mb-4">
+                    <i class="bi bi-shop display-3 text-success mb-3"></i>
+                    <h4 id="step3Title" class="fw-bold">3. Redeem Rewards</h4>
+                    <p id="step3Desc" class="text-muted">Spend your points on awesome products from our sustainable marketplace.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="p-5 bg-info text-white rounded-3 text-center shadow">
+                <h3 id="joinTitle" class="display-6 fw-bold">Join the Green Movement!</h3>
+                <p id="joinDesc" class="lead">Sign up today and get double reward points on your first 10 recycled items!</p>
+                <a id="joinBtn" class="btn btn-warning btn-lg fw-bold mt-3" href="/Identity/Account/Register">Get Started & Earn Rewards</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Language Switch Script -->
+<script>
+    const translations = {
+        zulu: {
+            title: "Uhlelo Lokuphatha Udoti lwe-RVM 🌍",
+            subtitle: "Izixazululo ezisimeme zokuphatha udoti ukuze uDurban neKZN kuhlanzeke.",
+            browseBtn: "Buka Imikhiqizo",
+            findBtn: "Thola i-RVM Eduze Kwakho",
+            howItWorks: "Kusebenza Kanjani: Hlanza & Thola Umvuzo",
+            step1Title: "1. Faka Udoti",
+            step1Desc: "Faka amabhodlela epulasitiki noma amathini eceleni kwe-RVM eduze kwakho.",
+            step2Title: "2. Thola Amaphuzu",
+            step2Desc: "Umshini ubona into futhi ukunika amaphuzu ngokushesha.",
+            step3Title: "3. Sebenzisa Imivuzo",
+            step3Desc: "Sebenzisa amaphuzu akho ukuthenga imikhiqizo esimeme emakethe yethu.",
+            joinTitle: "Joyina Umkhankaso Wokuhlanzeka!",
+            joinDesc: "Bhalisela namuhla uthole amaphuzu aphindwe kabili ezintweni zakho ezi-10 zokuqala.",
+            joinBtn: "Qala Manje & Thola Imivuzo"
+        },
+        english: {
+            title: "RVM Waste Management System 🌍",
+            subtitle: "Sustainable waste management solutions for a cleaner Durban and KZN region.",
+            browseBtn: "Browse Products",
+            findBtn: "Find an RVM Near You",
+            howItWorks: "How It Works: Clean & Get Rewarded",
+            step1Title: "1. Deposit Waste",
+            step1Desc: "Insert your empty plastic bottles or cans into any nearby RVM.",
+            step2Title: "2. Earn Points",
+            step2Desc: "The machine instantly recognizes the item and credits your account with points.",
+            step3Title: "3. Redeem Rewards",
+            step3Desc: "Spend your points on awesome products from our sustainable marketplace.",
+            joinTitle: "Join the Green Movement!",
+            joinDesc: "Sign up today and get double reward points on your first 10 recycled items!",
+            joinBtn: "Get Started & Earn Rewards"
+        }
+    };
+
+    let currentLang = "english";
+    document.getElementById("langToggle").addEventListener("click", () => {
+        currentLang = currentLang === "english" ? "zulu" : "english";
+        const t = translations[currentLang];
+
+        for (const id in t) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = t[id];
+        }
+
+        document.getElementById("langToggle").innerText =
+            currentLang === "english" ? "Switch to isiZulu" : "Shintsha Uye ku-English";
+    });
+</script>

@@ -1,0 +1,89 @@
+﻿@model IEnumerable<RVMWMApp.Models.IllegalDumpingReport>
+
+@{
+    ViewData["Title"] = "My Dumping Reports";
+}
+
+@functions {
+    string BadgeClass(string status) => status switch
+    {
+        "Reported" => "bg-warning text-dark",
+        "Under Review" => "bg-info text-dark",
+        "Resolved" => "bg-success",
+        "Closed" => "bg-secondary",
+        _ => "bg-light text-dark"
+    };
+}
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>My Dumping Reports</h2>
+        <a asp-action="Create" class="btn btn-success rounded-pill">
+            <i class="fas fa-plus me-2"></i>New Report
+        </a>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="card text-center p-5">
+            <p class="text-muted mb-3">You haven't reported anything yet.</p>
+            <div>
+                <a asp-action="Create" class="btn btn-success rounded-pill">Report illegal dumping</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-3">
+            @foreach (var report in Model)
+            {
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-map-marker-alt text-danger me-1"></i>@report.Location
+                                </h5>
+                                <span class="badge @BadgeClass(report.Status)">@report.Status</span>
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(report.Landmark))
+                            {
+                                <p class="text-muted small mb-1">Near: @report.Landmark</p>
+                            }
+
+                            <p class="mb-2">@report.Description</p>
+
+                            <p class="small text-muted mb-1">
+                                @if (!string.IsNullOrEmpty(report.WasteType))
+                                {
+                                    <span class="me-3"><i class="fas fa-trash me-1"></i>@report.WasteType</span>
+                                }
+                                @if (!string.IsNullOrEmpty(report.EstimatedQuantity))
+                                {
+                                    <span><i class="fas fa-weight-hanging me-1"></i>@report.EstimatedQuantity</span>
+                                }
+                            </p>
+
+                            <p class="small text-muted mb-0">
+                                Reported @report.ReportedAt.ToString("dd MMM yyyy, HH:mm")
+                            </p>
+
+                            @if (!string.IsNullOrEmpty(report.AdminNotes))
+                            {
+                                <div class="alert alert-light border mt-3 mb-0 small">
+                                    <strong>Update from our team:</strong> @report.AdminNotes
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

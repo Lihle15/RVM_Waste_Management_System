@@ -1,0 +1,142 @@
+﻿@model RVMWMApp.ViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container">
+    <div class="row">
+        <!-- Profile Info -->
+        <div class="col-lg-4 mb-4">
+            <div class="card card-premium">
+                <div class="card-header-premium text-center">
+                    <h5 class="mb-0"><i class="fas fa-user me-2"></i>Profile Information</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="profile-picture mb-3">
+                        <i class="fas fa-user-circle fa-5x text-primary"></i>
+                    </div>
+                    <h4>@Model.User.FullName</h4>
+                    <p class="text-muted">Member since @Model.User.MemberSince.ToString("MMM yyyy")</p>
+
+                    <div class="text-start mt-4">
+                        <p><strong><i class="fas fa-envelope me-2"></i>Email:</strong> @Model.User.Email</p>
+                        <p><strong><i class="fas fa-phone me-2"></i>Phone:</strong> @(Model.User.PhoneNumber ?? "Not set")</p>
+                        <p><strong><i class="fas fa-map-marker-alt me-2"></i>Address:</strong> @(Model.User.Address ?? "Not set")</p>
+                    </div>
+
+                    <a asp-action="Edit" class="btn btn-primary-premium w-100 mt-3">
+                        <i class="fas fa-edit me-2"></i>Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Environmental Impact -->
+        <div class="col-lg-8">
+            <div class="card card-premium mb-4">
+                <div class="card-header-premium text-center">
+                    <h5 class="mb-0"><i class="fas fa-leaf me-2"></i>Environmental Impact</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="impact-stat">
+                                <i class="fas fa-weight-hanging fa-2x text-primary mb-2"></i>
+                                <h3>@Model.Impact.RecycledWeight.ToString("0.0") kg</h3>
+                                <small>Total Recycled</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="impact-stat">
+                                <i class="fas fa-cloud fa-2x text-success mb-2"></i>
+                                <h3>@Model.Impact.CarbonReduced.ToString("0.0") kg</h3>
+                                <small>CO₂ Reduced</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="impact-stat">
+                                <i class="fas fa-tree fa-2x text-warning mb-2"></i>
+                                <h3>@Model.Impact.TreesSaved.ToString("0.0")</h3>
+                                <small>Trees Saved</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="impact-stat">
+                                <i class="fas fa-bolt fa-2x text-danger mb-2"></i>
+                                <h3>@Model.Impact.EnergySaved.ToString("0") kWh</h3>
+                                <small>Energy Saved</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recycling Stats -->
+            <div class="card card-premium">
+                <div class="card-header-premium text-center">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Recycling Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card">
+                                <div class="stat-number text-primary">@Model.User.TotalRecyclingSessions</div>
+                                <div class="stat-label">Total Sessions</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card">
+                                <div class="stat-number text-success">@((Model.User.TotalRecycledWeight / 1000).ToString("0.0"))</div>
+                                <div class="stat-label">Tons Recycled</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="stat-card">
+                                <div class="stat-number text-info">@Model.User.MemberSince.ToString("MMM yyyy")</div>
+                                <div class="stat-label">Member Since</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .profile-picture {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .impact-stat {
+        padding: 1rem;
+    }
+
+        .impact-stat h3 {
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+    .stat-card {
+        padding: 1.5rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #6c757d;
+        font-weight: 500;
+    }
+</style>

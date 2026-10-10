@@ -1,0 +1,142 @@
+﻿@model Feedback
+@{
+    ViewData["Title"] = "Write Review";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-premium">
+                <div class="card-header-premium text-center">
+                    <h4 class="mb-0"><i class="fas fa-edit me-2"></i>Share Your Recycling Experience</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <!-- Rating Section -->
+                        <div class="mb-4 text-center">
+                            <label class="form-label fw-bold mb-3">How would you rate your experience?</label>
+                            <div class="rating-stars mb-2">
+                                <input type="radio" id="star5" name="Rating" value="5" />
+                                <label for="star5"><i class="fas fa-star"></i></label>
+
+                                <input type="radio" id="star4" name="Rating" value="4" />
+                                <label for="star4"><i class="fas fa-star"></i></label>
+
+                                <input type="radio" id="star3" name="Rating" value="3" />
+                                <label for="star3"><i class="fas fa-star"></i></label>
+
+                                <input type="radio" id="star2" name="Rating" value="2" />
+                                <label for="star2"><i class="fas fa-star"></i></label>
+
+                                <input type="radio" id="star1" name="Rating" value="1" required />
+                                <label for="star1"><i class="fas fa-star"></i></label>
+                            </div>
+                            <span asp-validation-for="Rating" class="text-danger"></span>
+                            <small class="text-muted">Click on a star to rate (1-5 stars)</small>
+                        </div>
+
+                        <!-- Comment Section -->
+                        <div class="mb-4">
+                            <label asp-for="Comment" class="form-label fw-bold">Your Review *</label>
+                            <textarea asp-for="Comment" class="form-control" rows="6"
+                                      placeholder="Tell us about your experience with our recycling system...
+• Was the RVM easy to use?
+• How was the reward system?
+• Any suggestions for improvement?
+• Would you recommend us to others?"
+                                      maxlength="500" required></textarea>
+                            <span asp-validation-for="Comment" class="text-danger"></span>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted">Share your honest thoughts to help us improve</small>
+                                <small class="text-muted"><span id="charCount">0</span>/500 characters</small>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-outline-secondary me-md-2">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Reviews
+                            </a>
+                            <button type="submit" class="btn btn-primary-premium btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Move styles from section to inline style tag -->
+<style>
+    .rating-stars {
+        display: inline-block;
+        font-size: 2.5rem;
+        unicode-bidi: bidi-override;
+        direction: rtl;
+    }
+
+        .rating-stars input {
+            display: none;
+        }
+
+        .rating-stars label {
+            color: #ddd;
+            cursor: pointer;
+            padding: 0 5px;
+            transition: color 0.2s;
+        }
+
+            .rating-stars label:hover,
+            .rating-stars label:hover ~ label,
+            .rating-stars input:checked ~ label {
+                color: #ffc107;
+            }
+
+        .rating-stars input:checked + label {
+            color: #ffc107;
+        }
+
+    .form-control:focus {
+        border-color: #2E8B57;
+        box-shadow: 0 0 0 0.2rem rgba(46, 139, 87, 0.25);
+    }
+</style>
+
+<!-- Move scripts from section to script tag -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const textarea = document.querySelector('textarea');
+        const charCount = document.getElementById('charCount');
+
+        // Character counter
+        textarea.addEventListener('input', function() {
+            const length = this.value.length;
+            charCount.textContent = length;
+
+            // Change color when approaching limit
+            if (length > 450) {
+                charCount.classList.add('text-danger');
+            } else {
+                charCount.classList.remove('text-danger');
+            }
+        });
+
+        // Auto-select 5 stars by default for better UX
+        document.getElementById('star5').checked = true;
+
+        // Add hover effects for stars
+        const stars = document.querySelectorAll('.rating-stars input');
+        stars.forEach(star => {
+            star.addEventListener('change', function() {
+                // Remove all checked first
+                stars.forEach(s => s.checked = false);
+                // Check the selected one
+                this.checked = true;
+            });
+        });
+    });
+</script>

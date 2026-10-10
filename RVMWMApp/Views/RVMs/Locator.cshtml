@@ -1,0 +1,154 @@
+﻿@model IEnumerable<ReverseVendingMachine>
+@{
+    ViewData["Title"] = "RVMs Locator";
+}
+
+<style>
+    /* Custom styles to match a modern, clean, green-themed design */
+    .card-premium {
+        border-left: 5px solid #4CAF50; /* Green primary color border */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        border-radius: 0.5rem;
+    }
+
+    .card-header-premium {
+        background-color: #f7fff7; /* Light green background */
+        border-bottom: 1px solid #e0e0e0;
+        padding: 1rem;
+        color: #4CAF50; /* Green text */
+        font-weight: bold;
+    }
+
+    .map-image-container {
+        height: 500px; /* Set a fixed height for the map image */
+        border-radius: 0.5rem;
+        overflow: hidden;
+        display: flex; /* To center the image if needed */
+        justify-content: center;
+        align-items: center;
+        background-color: #e6f7e6; /* Fallback background if image fails */
+    }
+
+        .map-image-container img {
+            max-width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ensures the whole image is visible */
+            border-radius: 0.5rem;
+        }
+
+    .rvm-card-item:hover {
+        background-color: #f0fff0; /* Hover effect for list items */
+        cursor: pointer;
+    }
+
+    .text-primary-green {
+        color: #4CAF50 !important;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="fw-bold"><i class="fas fa-map-marker-alt me-3 text-primary-green"></i>RVMs Locator</h1>
+            <p class="lead text-muted">Find Reverse Vending Machines near you in Durban and KZN area. Check capacity before you go!</p>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <input type="text" id="rvmSearch" class="form-control form-control-lg border-success"
+                   placeholder="Search by location, name, or status (e.g., active, warning)..." />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card card-premium h-100">
+                <div class="card-header-premium">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Available RVMs (<span id="rvmCount">@Model.Count()</span>)</h5>
+                </div>
+                <div class="card-body p-0" id="rvmListContainer" style="overflow-y: auto; max-height: calc(100vh - 250px);">
+                    @if (Model.Any())
+                    {
+                        foreach (var rvm in Model)
+                        {
+                            var currentLoadFormatted = rvm.CurrentLoad.ToString("N2"); // Format to 2 decimals
+                            var capacityFormatted = rvm.Capacity.ToString("N2"); // Format to 2 decimals
+                            var percentage = rvm.Capacity > 0 ? (int)((decimal)rvm.CurrentLoad / rvm.Capacity * 100) : 0;
+                            var capacityColorClass = percentage >= 80 ? "bg-danger" : percentage >= 60 ? "bg-warning" : "bg-success";
+
+                            <div class="p-3 border-bottom rvm-card-item" data-location="@rvm.Location" data-name="@rvm.MachineName" data-status="@(rvm.IsActive ? "active" : "inactive")" data-percentage="@percentage">
+                                <h6 class="mb-1 fw-bold text-primary-green">@rvm.MachineName</h6>
+                                <p class="small text-muted mb-1">
+                                    <i class="fas fa-map-marker-alt me-1"></i>@rvm.Location
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <small class="text-muted">Capacity</small>
+                                    <small class="@(capacityColorClass.Replace("bg-", "text-")) fw-bold">@percentage%</small>
+                                </div>
+                                <div class="progress progress-premium mb-2" style="height: 8px;">
+                                    <div class="progress-bar @capacityColorClass"
+                                         role="progressbar" style="width: @percentage%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted">@currentLoadFormatted / @capacityFormatted kg</small>
+                                    <span class="badge @(rvm.IsActive ? "bg-success" : "bg-secondary")">
+                                        @(rvm.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted p-3">No RVMs available at the moment.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card card-premium h-100">
+                <div class="card-header-premium">
+                    <h5 class="mb-0"><i class="fas fa-map me-2"></i>Map View (Static)</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="map-image-container">
+                        <img src="/images/Map.png" alt="Map of RVM Locations in Durban & KZN" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // --- RVM Search and Filter Functionality ---
+            $('#rvmSearch').on('keyup', function () {
+                var searchTerm = $(this).val().toLowerCase().trim();
+                var visibleCount = 0;
+
+                $('#rvmListContainer').find('.rvm-card-item').each(function () {
+                    var rvmName = $(this).data('name').toLowerCase();
+                    var rvmLocation = $(this).data('location').toLowerCase();
+                    var rvmStatus = $(this).data('status').toLowerCase();
+
+                    // Construct a single string to search against
+                    var searchString = rvmName + ' ' + rvmLocation + ' ' + rvmStatus;
+
+                    if (searchString.includes(searchTerm)) {
+                        $(this).show();
+                        visibleCount++;
+                    } else {
+                        $(this).hide();
+                    }
+                });
+
+                // Update the RVM count
+                $('#rvmCount').text(visibleCount);
+            });
+        });
+    </script>
+}

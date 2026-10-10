@@ -1,0 +1,73 @@
+﻿@model RVMWMApp.Models.Product
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="container">
+    <h2>@Model.Name</h2>
+    <hr />
+
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid mb-4" style="max-height: 300px; object-fit: cover; border-radius: 8px;" />
+    }
+    else
+    {
+        <img src="~/images/placeholder.png" alt="No Image" class="img-fluid mb-4" style="max-height: 300px; object-fit: cover; border-radius: 8px;" />
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <dl class="row">
+                <dt class="col-sm-3">Description:</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+
+                <dt class="col-sm-3">Price:</dt>
+                <dd class="col-sm-9">R@(Model.Price.ToString("F2"))</dd>
+
+                <dt class="col-sm-3">Stock:</dt>
+                <dd class="col-sm-9">
+                    <span class="badge bg-@(Model.Stock > 0 ? "success" : "danger")">
+                        @(Model.Stock > 0 ? $"{Model.Stock} available" : "Out of Stock")
+                    </span>
+                </dd>
+
+                <dt class="col-sm-3">Category:</dt>
+                <dd class="col-sm-9">@Model.Category</dd>
+
+                <dt class="col-sm-3">Rating:</dt>
+                <dd class="col-sm-9">
+                    @{
+                        var fullStars = (int)Model.Rating;
+                        var hasHalfStar = Model.Rating - fullStars >= 0.5;
+                    }
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        if (i <= fullStars)
+                        {
+                            <span class="text-warning">★</span>
+                        }
+                        else if (i == fullStars + 1 && hasHalfStar)
+                        {
+                            <span class="text-warning">★</span>
+                        }
+                        else
+                        {
+                            <span class="text-warning">☆</span>
+                        }
+                    }
+                    (@Model.ReviewCount reviews)
+                </dd>
+            </dl>
+
+            <div class="mt-4">
+                @if (Model.Stock > 0)
+                {
+                    <button class="btn btn-success btn-lg">Add to Cart</button>
+                }
+                <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
